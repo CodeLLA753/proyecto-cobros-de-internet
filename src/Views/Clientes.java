@@ -1,4 +1,9 @@
 package Views;
+
+import Dto.ClienteDto;
+import Dto.EstadosDto;
+import Logica.ClienteLogica;
+import Logica.EstadoLogica;
 import Views.MenuUsuario;
 import conexion.Conexion;
 import javax.swing.JOptionPane;
@@ -6,14 +11,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
-
-
+import java.util.ArrayList;
 
 public class Clientes extends javax.swing.JFrame {
 
     public Clientes() {
         initComponents();
+        setLocationRelativeTo(null);
         cargarServicios();
         cargarEstados();
     }
@@ -45,6 +49,7 @@ public class Clientes extends javax.swing.JFrame {
         cmbEstado = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Registrar Clientes");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("CLIENTES");
@@ -82,7 +87,12 @@ public class Clientes extends javax.swing.JFrame {
             }
         });
 
-        btnEditar.setText("Editar");
+        btnEditar.setText("Registrar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -216,90 +226,36 @@ public class Clientes extends javax.swing.JFrame {
     }//GEN-LAST:event_txtDireccionActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-       MenuUsuario menu = new MenuUsuario();
-    menu.setVisible(true);
-    this.dispose();
+        MenuUsuario menu = new MenuUsuario();
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-         
+
         String nombre = txtNombre.getText();
         String aPaterno = txtAPaterno.getText();
         String aMaterno = txtAMaterno.getText();
         String telefono = txtTelefono.getText();
         String correo = txtCorreo.getText();
         String direccion = txtDireccion.getText();
-   
-    
-     if (nombre.isEmpty() || aPaterno.isEmpty() || telefono.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Faltan datos obligatorios");
-            return;
-        }
-     
-     String estadoSel = cmbEstado.getSelectedItem().toString();
-int idEstado = Integer.parseInt(estadoSel.split(" - ")[0]);
 
-      
+       
+        try (Connection conn = Conexion.conectar()) {       
 
-    try (Connection conn = Conexion.conectar()) {
+            JOptionPane.showMessageDialog(this, "Cliente agregado correctamente");
 
-        // Insertar DIRECCION
-        String sqlDir = "INSERT INTO Direccion (NombreCalle) VALUES (?)";
-        PreparedStatement pstDir = conn.prepareStatement(sqlDir, PreparedStatement.RETURN_GENERATED_KEYS);
-        pstDir.setString(1, direccion);
-        pstDir.executeUpdate();
-
-        ResultSet rsDir = pstDir.getGeneratedKeys();
-        rsDir.next();
-        int idDireccion = rsDir.getInt(1);
-
-        
-  //  Obtener ID del estado para CLIENTE
-  String sqlEstado = "SELECT IdEstado FROM Estado WHERE TipoEntidad='Cliente' AND NombreEstado=?";
-PreparedStatement pstEst = conn.prepareStatement(sqlEstado);
-
-
-   String sqlCli =
-"INSERT INTO Cliente (Nombre, APaterno, AMaterno, Telefono, Correo, IdDireccion, IdEstado) "
-+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-   
-PreparedStatement pstCli = conn.prepareStatement(
-    sqlCli,
-    PreparedStatement.RETURN_GENERATED_KEYS
-);
-
-pstCli.setString(1, nombre);
-pstCli.setString(2, aPaterno);
-pstCli.setString(3, aMaterno);
-pstCli.setString(4, telefono);
-pstCli.setString(5, correo);
-pstCli.setInt(6, idDireccion);
-pstCli.setInt(7, idEstado); 
-// INSERTAR CLIENTE
-pstCli.executeUpdate();
-ResultSet rsCli = pstCli.getGeneratedKeys();
-rsCli.next();
-int idCliente = rsCli.getInt(1);
-
-String servicioSel = cmbServicio.getSelectedItem().toString();
-int idServicio = Integer.parseInt(servicioSel.split(" - ")[0]);
-
-String sqlCS =
-    "INSERT INTO Cliente_Servicio (IdCliente, IdServicio) VALUES (?, ?)";
-
-PreparedStatement pstCS = conn.prepareStatement(sqlCS);
-pstCS.setInt(1, idCliente);
-pstCS.setInt(2, idServicio);
-pstCS.executeUpdate();
-JOptionPane.showMessageDialog(this,
-    "Cliente y servicio agregados correctamente");
-
-        JOptionPane.showMessageDialog(this, "Cliente agregado correctamente");
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error al agregar cliente: " + e.getMessage());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al agregar cliente: " + e.getMessage());
     }//GEN-LAST:event_btnAgregarActionPerformed
+        txtNombre.setText("");
+        txtAPaterno.setText("");
+        txtAMaterno.setText("");
+        txtTelefono.setText("");
+        txtCorreo.setText("");
+        txtDireccion.setText("");
     }
+
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
 
     }//GEN-LAST:event_btnEliminarActionPerformed
@@ -307,13 +263,45 @@ JOptionPane.showMessageDialog(this,
     private void cmbServicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbServicioActionPerformed
     }//GEN-LAST:event_cmbServicioActionPerformed
 
- public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            new Clientes().setVisible(true);
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        ClienteDto clienteDto = new ClienteDto();
+        clienteDto.Nombre = txtNombre.getText();
+        clienteDto.APaterno = txtAPaterno.getText();
+        clienteDto.AMaterno = txtAMaterno.getText();
+        clienteDto.Telefono = txtTelefono.getText();
+        clienteDto.Correo = txtCorreo.getText();
+        clienteDto.Direccion = txtDireccion.getText();
+        EstadosDto estadoDto = new EstadosDto();
+        
+           String estadoSel = cmbEstado.getSelectedItem().toString();
+        estadoDto.IdEstado = Integer.parseInt(estadoSel.split(" - ")[0]);
+
+        // estadoDto.IdEstado = 
+        
+        ClienteLogica clienteLogica = new ClienteLogica();
+        boolean registroExitoso = clienteLogica.RegistrarCliente(clienteDto, estadoDto);
+        if (registroExitoso){
+            JOptionPane.showMessageDialog(null, "se registro exitosamente");
+            txtNombre.setText("");
+            txtAPaterno.setText("");
+            txtAMaterno.setText("");
+            txtTelefono.setText("");
+            txtCorreo.setText("");
+            txtDireccion.setText("");
+           
+            
+        }else {
+           JOptionPane.showMessageDialog(null, "error al registrar");  
         }
-    });
-}
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Clientes().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
@@ -339,45 +327,34 @@ JOptionPane.showMessageDialog(this,
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 
-   private void cargarServicios() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarServicios() {
+        try (Connection conn = Conexion.conectar()) {
 
-        String sql = "SELECT IdServicio, TipoServicio, Costo FROM Servicio";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        ResultSet rs = pst.executeQuery();
+            String sql = "SELECT IdServicio, TipoServicio, Costo FROM Servicio";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
 
-        cmbServicio.removeAllItems();
+            cmbServicio.removeAllItems();
 
-        while (rs.next()) {
-            String item = rs.getInt("IdServicio") + " - "
+            while (rs.next()) {
+                String item = rs.getInt("IdServicio") + " - "
                         + rs.getString("TipoServicio") + " - $"
                         + rs.getDouble("Costo");
-            cmbServicio.addItem(item);
-        }
+                cmbServicio.addItem(item);
+            }
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this,
-            "Error cargando servicios: " + e.getMessage());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error cargando servicios: " + e.getMessage());
+        }
+    }
+
+    private void cargarEstados() {
+        
+        EstadoLogica estadoLogicaObj = new EstadoLogica();
+        ArrayList<EstadosDto> listaEstados = estadoLogicaObj.listarEstados();
+        for (EstadosDto estado:listaEstados){
+            cmbEstado.addItem(estado.IdEstado + " - " + estado.NombreEstado);
+        }
     }
 }
-   
-   private void cargarEstados() {
-    try (Connection conn = Conexion.conectar()) {
-
-        String sql = "SELECT IdEstado, NombreEstado FROM Estado WHERE TipoEntidad='Cliente'";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        ResultSet rs = pst.executeQuery();
-          cmbEstado.removeAllItems();
-
-        while (rs.next()) {
-            cmbEstado.addItem(
-                rs.getInt("IdEstado") + " - " + rs.getString("NombreEstado")
-            );
-        }
-         } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this,
-            "Error cargando estados: " + e.getMessage());
-    }
-}
-}
-

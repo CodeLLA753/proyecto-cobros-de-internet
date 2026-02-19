@@ -10,6 +10,7 @@ public class Clientes_Servicios extends javax.swing.JFrame {
 
    public Clientes_Servicios() {
         initComponents();
+        setLocationRelativeTo(null);
         cargarTablaClientesCompleta();
     }
     private void cargarTablaClientesCompleta() {
