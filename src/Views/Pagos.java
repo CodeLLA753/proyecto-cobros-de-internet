@@ -5,138 +5,129 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Pagos extends javax.swing.JFrame {
-    
-public Pagos() {
-    initComponents();
-    cargarClientes();
-    cargarServicios();
-    cargarMeses();
-    cargarMetodos();
-    cargarEstadosPago();
-    cargarPersonal();
-}
 
+    public Pagos() {
+        initComponents();
+        cargarClientes();
+        cargarServicios();
+        cargarMeses();
+        cargarMetodos();
+        cargarEstadosPago();
+        cargarPersonal();
+    }
 
     //CARGAR CLIENTES
-private void cargarClientes() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarClientes() {
+        try (Connection conn = Conexion.conectar()) {
 
-        PreparedStatement pst = conn.prepareStatement("SELECT IdCliente, Nombre FROM Cliente");
-        ResultSet rs = pst.executeQuery();
+            PreparedStatement pst = conn.prepareStatement("SELECT IdCliente, Nombre FROM Cliente");
+            ResultSet rs = pst.executeQuery();
 
-        cmbCliente.removeAllItems();
+            cmbCliente.removeAllItems();
 
-        while (rs.next()) {
-            cmbCliente.addItem(rs.getInt("IdCliente") + " - " + rs.getString("Nombre"));
+            while (rs.next()) {
+                cmbCliente.addItem(rs.getInt("IdCliente") + " - " + rs.getString("Nombre"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error cargar clientes: " + e);
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error cargar clientes: " + e);
     }
-}
-
 
 //CARGAR SERVICIO POR CLIENTE
-private void cargarServicios() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarServicios() {
+        try (Connection conn = Conexion.conectar()) {
 
-        PreparedStatement pst = conn.prepareStatement("SELECT IdServicio, TipoServicio FROM Servicio");
-        ResultSet rs = pst.executeQuery();
+            PreparedStatement pst = conn.prepareStatement("SELECT IdServicio, TipoServicio FROM Servicio");
+            ResultSet rs = pst.executeQuery();
 
-        cmbServicio.removeAllItems();
+            cmbServicio.removeAllItems();
 
-        while (rs.next()) {
-            cmbServicio.addItem(rs.getInt("IdServicio") + " - " + rs.getString("TipoServicio"));
+            while (rs.next()) {
+                cmbServicio.addItem(rs.getInt("IdServicio") + " - " + rs.getString("TipoServicio"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error cargar servicios: " + e);
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error cargar servicios: " + e);
     }
-}
-
 
 //CARGAR MESES
-private void cargarMeses() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarMeses() {
+        try (Connection conn = Conexion.conectar()) {
 
-        PreparedStatement pst = conn.prepareStatement("SELECT IdMes, NombreMes FROM Mes");
-        ResultSet rs = pst.executeQuery();
+            PreparedStatement pst = conn.prepareStatement("SELECT IdMes, NombreMes FROM Mes");
+            ResultSet rs = pst.executeQuery();
 
-        cmbMes.removeAllItems();
+            cmbMes.removeAllItems();
 
-        while (rs.next()) {
-            cmbMes.addItem(rs.getInt("IdMes") + " - " + rs.getString("NombreMes"));
+            while (rs.next()) {
+                cmbMes.addItem(rs.getInt("IdMes") + " - " + rs.getString("NombreMes"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error meses: " + e);
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error meses: " + e);
     }
-}
-
 
 // CARGAR METODO DE PAGO
-private void cargarMetodos() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarMetodos() {
+        try (Connection conn = Conexion.conectar()) {
 
-        PreparedStatement pst = conn.prepareStatement("SELECT IdMetodoPago, MetodoPago FROM MetodoPago");
-        ResultSet rs = pst.executeQuery();
+            PreparedStatement pst = conn.prepareStatement("SELECT IdMetodoPago, MetodoPago FROM MetodoPago");
+            ResultSet rs = pst.executeQuery();
 
-        cmbMetodoPago.removeAllItems();
+            cmbMetodoPago.removeAllItems();
 
-        while (rs.next()) {
-            cmbMetodoPago.addItem(rs.getInt("IdMetodoPago") + " - " + rs.getString("MetodoPago"));
+            while (rs.next()) {
+                cmbMetodoPago.addItem(rs.getInt("IdMetodoPago") + " - " + rs.getString("MetodoPago"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error metodo de pago: " + e);
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error metodo de pago: " + e);
     }
-}
-
 
 // CARGAR ESTADO
-private void cargarEstadosPago() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarEstadosPago() {
+        try (Connection conn = Conexion.conectar()) {
 
-        PreparedStatement pst = conn.prepareStatement(
-            "SELECT IdEstado, NombreEstado FROM Estado WHERE TipoEntidad='Pago'"
-        );
-        ResultSet rs = pst.executeQuery();
+            PreparedStatement pst = conn.prepareStatement(
+                    "SELECT IdEstado, NombreEstado FROM Estado WHERE TipoEntidad='Pago'"
+            );
+            ResultSet rs = pst.executeQuery();
 
-        cmbEstadoPago.removeAllItems();
+            cmbEstadoPago.removeAllItems();
 
-        while (rs.next()) {
-            cmbEstadoPago.addItem(rs.getInt("IdEstado") + " - " + rs.getString("NombreEstado"));
+            while (rs.next()) {
+                cmbEstadoPago.addItem(rs.getInt("IdEstado") + " - " + rs.getString("NombreEstado"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error cargar estado pago: " + e);
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error cargar estado pago: " + e);
     }
-}
-
 
 // CARGAR PERSONAL
-private void cargarPersonal() {
-    try (Connection conn = Conexion.conectar()) {
+    private void cargarPersonal() {
+        try (Connection conn = Conexion.conectar()) {
 
-        PreparedStatement pst = conn.prepareStatement("SELECT IdPersonal, Nombre FROM Personal");
-        ResultSet rs = pst.executeQuery();
+            PreparedStatement pst = conn.prepareStatement("SELECT IdPersonal, Nombre FROM Personal");
+            ResultSet rs = pst.executeQuery();
 
-        cmbPersonal.removeAllItems();
+            cmbPersonal.removeAllItems();
 
-        while (rs.next()) {
-            cmbPersonal.addItem(rs.getInt("IdPersonal") + " - " + rs.getString("Nombre"));
+            while (rs.next()) {
+                cmbPersonal.addItem(rs.getInt("IdPersonal") + " - " + rs.getString("Nombre"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error cargar personal: " + e);
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error cargar personal: " + e);
     }
-}
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -195,12 +186,22 @@ private void cargarPersonal() {
         jPanel1.add(cmbPersonal, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 150, -1));
 
         cmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbClienteActionPerformed(evt);
+            }
+        });
         jPanel1.add(cmbCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 60, 150, -1));
 
         cmbServicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel1.add(cmbServicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 100, 150, -1));
 
         cmbMetodoPago.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbMetodoPago.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbMetodoPagoActionPerformed(evt);
+            }
+        });
         jPanel1.add(cmbMetodoPago, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 140, 150, -1));
 
         cmbMes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -256,93 +257,117 @@ private void cargarPersonal() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-                                 
-        if (cmbCliente.getSelectedIndex() == -1 ||
-        cmbServicio.getSelectedIndex() == -1 ||
-        cmbMetodoPago.getSelectedIndex() == -1 ||
-        cmbMes.getSelectedIndex() == -1 ||
-        cmbEstadoPago.getSelectedIndex() == -1 ||
-        cmbPersonal.getSelectedIndex() == -1 ||
-        jTextField1.getText().isEmpty()) {
 
-        JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
-        return;
-    }
+        if (cmbCliente.getSelectedIndex() == -1
+                || cmbServicio.getSelectedIndex() == -1
+                || cmbMetodoPago.getSelectedIndex() == -1
+                || cmbMes.getSelectedIndex() == -1
+                || cmbEstadoPago.getSelectedIndex() == -1
+                || cmbPersonal.getSelectedIndex() == -1
+                || jTextField1.getText().isEmpty()) {
 
-    int idCliente = Integer.parseInt(
-        cmbCliente.getSelectedItem().toString().split(" - ")[0]
-    );
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
+            return;
+        }
 
-    int idServicio = Integer.parseInt(
-        cmbServicio.getSelectedItem().toString().split(" - ")[0]
-    );
+        try (Connection conn = Conexion.conectar()) {
 
-    int idEstadoPago = Integer.parseInt(
-        cmbEstadoPago.getSelectedItem().toString().split(" - ")[0]
-    );
+            int idCliente = Integer.parseInt(
+                    cmbCliente.getSelectedItem().toString().split(" - ")[0]);
 
+            int idServicio = Integer.parseInt(
+                    cmbServicio.getSelectedItem().toString().split(" - ")[0]);
 
-    String metodoPago = cmbMetodoPago.getSelectedItem().toString();
-    String mesPagado = cmbMes.getSelectedItem().toString();
-    String personal = cmbPersonal.getSelectedItem().toString();
-    String fechaPago = jTextField1.getText();
+            int idMetodoPago = Integer.parseInt(
+                    cmbMetodoPago.getSelectedItem().toString().split(" - ")[0]);
 
-   try (Connection conn = Conexion.conectar()) {
+            int idMes = Integer.parseInt(
+                    cmbMes.getSelectedItem().toString().split(" - ")[0]);
 
-      int idClienteServicio = 0;
+            int idEstado = Integer.parseInt(
+                    cmbEstadoPago.getSelectedItem().toString().split(" - ")[0]);
 
-    String sqlCS =
-        "SELECT IdCliente_Servicio " +
-        "FROM cliente_servicio " +
-        "WHERE IdCliente = ? AND IdServicio = ?";
+            int idPersonal = Integer.parseInt(
+                    cmbPersonal.getSelectedItem().toString().split(" - ")[0]);
 
-    PreparedStatement pstCS = conn.prepareStatement(sqlCS);
-    pstCS.setInt(1, idCliente);
-    pstCS.setInt(2, idServicio);
+            String fechaPago = jTextField1.getText();
 
-    ResultSet rs = pstCS.executeQuery();
+            // Obtener costo del servicio
+            double monto = 0;
 
-    if (rs.next()) {
-        idClienteServicio = rs.getInt("IdCliente_Servicio");
-    } else {
-        JOptionPane.showMessageDialog(this,
-            "❌ El cliente no tiene asignado ese servicio");
-        return;
-    }
+            String sqlCosto = "SELECT Costo FROM Servicio WHERE IdServicio = ?";
+            PreparedStatement psCosto = conn.prepareStatement(sqlCosto);
+            psCosto.setInt(1, idServicio);
+            ResultSet rsCosto = psCosto.executeQuery();
 
-      //  INSERTAR TICKET
-    String sqlTICKETS =
-        "INSERT INTO tickets (IdCliente_Servicio, FechaPago, IdEstado) " +
-        "VALUES (?, ?, ?)";
+            if (rsCosto.next()) {
+                monto = rsCosto.getDouble("Costo");
+            }
+            // Obtener IdCliente_Servicio
+            int idClienteServicio = 0;
 
-    PreparedStatement pst = conn.prepareStatement(sqlTICKETS);
-    pst.setInt(1, idClienteServicio);
-    pst.setString(2, fechaPago);
-    pst.setInt(3, idEstadoPago);
-    pst.executeUpdate();
+            String sqlCS = "SELECT IdCliente_Servicio FROM Cliente_Servicio WHERE IdCliente = ? AND IdServicio = ?";
+            PreparedStatement pstCS = conn.prepareStatement(sqlCS);
+            pstCS.setInt(1, idCliente);
+            pstCS.setInt(2, idServicio);
+            ResultSet rs = pstCS.executeQuery();
 
-    // INSERTAR HISTORIAL 
-    String sqlHistorial =
-        "INSERT INTO historial (IdPersonal, Accion, Tabla_Afectada, Descripcion, Fecha) " +
-        "VALUES (?, ?, ?, ?, NOW())";
+            if (rs.next()) {
+                idClienteServicio = rs.getInt("IdCliente_Servicio");
+            } else {
+                JOptionPane.showMessageDialog(this, "El cliente no tiene ese servicio");
+                return;
+            }
 
-    PreparedStatement pstH = conn.prepareStatement(sqlHistorial);
-    pstH.setInt(1,
-        Integer.parseInt(cmbPersonal.getSelectedItem().toString().split(" - ")[0])
-    );
-    pstH.setString(2, "INSERT");
-    pstH.setString(3, "tickets");
-    pstH.setString(4,
-        "Pago registrado | Cliente ID: " + idCliente +
-        " | Servicio ID: " + idServicio
-    );
-    pstH.executeUpdate();
+            // INSERTAR EN PAGOS
+            String sqlPago = """
+            INSERT INTO Pagos
+            (IdCliente_Servicio, MontoPagado, FechaPago,
+             IdMetodoPago, IdMes, IdEstado, IdPersonal)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
 
-    JOptionPane.showMessageDialog(this, "Pago registrado correctamente");
+            PreparedStatement pstPago = conn.prepareStatement(sqlPago);
+            pstPago.setInt(1, idClienteServicio);
+            pstPago.setDouble(2, monto);
+            pstPago.setString(3, fechaPago);
+            pstPago.setInt(4, idMetodoPago);
+            pstPago.setInt(5, idMes);
+            pstPago.setInt(6, idEstado);
+            pstPago.setInt(7, idPersonal);
+            pstPago.executeUpdate();
+            
+            // 4. INSERTAR EN TICKETS
+        String sqlTicket = """
+            INSERT INTO tickets (IdCliente_Servicio, FechaPago, IdEstado)
+            VALUES (?, ?, ?)
+        """;
 
-} catch (SQLException e) {
-    JOptionPane.showMessageDialog(this,
-        "Error al guardar pago: " + e.getMessage());
+        PreparedStatement pstTicket = conn.prepareStatement(sqlTicket);
+        pstTicket.setInt(1, idClienteServicio);
+        pstTicket.setString(2, fechaPago);
+        pstTicket.setInt(3, idEstado);
+        pstTicket.executeUpdate();
+        
+        // 5. INSERTAR EN HISTORIAL
+        String sqlHistorial = """
+            INSERT INTO Historial
+            (IdPersonal, Accion, Tabla_Afectada, Descripcion, Fecha)
+            VALUES (?, 'INSERT', 'Pagos', ?, NOW())
+        """;
+
+        PreparedStatement pstH = conn.prepareStatement(sqlHistorial);
+        pstH.setInt(1, idPersonal);
+        pstH.setString(2,
+                "Pago registrado | Cliente ID: " + idCliente +
+                " | Servicio ID: " + idServicio
+        );
+        pstH.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Pago registrado correctamente");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al guardar pago: " + e.getMessage());
 }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -355,6 +380,14 @@ private void cargarPersonal() {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void cmbMetodoPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbMetodoPagoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbMetodoPagoActionPerformed
+
+    private void cmbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbClienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbClienteActionPerformed
 
     /**
      * @param args the command line arguments
